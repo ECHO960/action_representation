@@ -9,4 +9,11 @@ There are following questions that will be possibly concerned. For example, How 
 We would like to try different approximation methods on each point trajectory of the skeleton animations data. Also, we would like to cluster the existing skeleton data and derive a sensible form to represent each action using these techniques. Further, we plan to use such representation to generate new combination actions which consist of multiple actions. Also, through this representation power, we plan to use this as an action descriptor to do recognition task on the action. 
 
 
-======
+#MILETONE
+1. 11/5  - 11/12 
+ 
+2. 11/12 - 11/19
+
+3. 11/19 - 11/26
+
+4. 11/26 - 12/03
