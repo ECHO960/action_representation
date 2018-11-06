@@ -7,3 +7,6 @@ This project focus on representing trajectories of 3D points efficiently using a
 There are following questions that will be possibly concerned. For example, How to generate new trajectories on new animation models given real-world data? Given a human skeleton data, is there a way to classify those action? How to blend the different actions together to create new animations? 
 
 We would like to try different approximation methods on each point trajectory of the skeleton animations data. Also, we would like to cluster the existing skeleton data and derive a sensible form to represent each action using these techniques. Further, we plan to use such representation to generate new combination actions which consist of multiple actions. Also, through this representation power, we plan to use this as an action descriptor to do recognition task on the action. 
+
+
+======
