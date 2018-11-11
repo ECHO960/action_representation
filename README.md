@@ -1,7 +1,5 @@
 ## Action Representation
-Project for CMU 16811 2018 FALL
-
-Chunhui LIu & Kenan Deng
+Chunhui LIu & Kenan Deng Project for CMU 16811 2018 FALL
 
 3D skeleton points derived from the human body can provide valuable and comprehensive representations of human actions. Modeling the trajectories of real-world skeleton points can help us understanding and generating human actions.
 
