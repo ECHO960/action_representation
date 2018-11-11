@@ -13,25 +13,26 @@ MSR-action-3D
 todo: update data format in this repo
 
 # project outline
-1. definition of problem 
-2. solutions:
-  (1) baseline （x,y,z) based : approximation using basic function (L2 dis)
-  (2) (u,v) based:  approximation using basic function (L2 dis)
+1. definition of problem \\
+2. solutions: \\
+  (1) baseline （x,y,z) based : approximation using basic function (L2 dis) \\
+  (2) (u,v) based:  approximation using basic function (L2 dis) \\
   (3) (u,v) based: lie group based analysis*
-3. experiments:
-  (1) representations of actions, maybe combination
+
+3. experiments:\\
+  (1) representations of actions, maybe combination \\
   (2) classification
 
 # MILETONE
-1. 11/5  - 11/12 
-LCH: Pre-process Data 
-DKN: go through code
+1. 11/5  - 11/12 \\
+LCH: Pre-process Data \\ 
+DKN: go through code \\
 
-2. 11/12 - 11/19
-LCH: implement solutions
-DKN: implement solutions
+2. 11/12 - 11/19 \\
+LCH: implement solutions \\
+DKN: implement solutions \\
 
-3. 11/19 - 11/26
+3. 11/19 - 11/26 \\
 experiments
 
 4. 11/26 - 12/03
