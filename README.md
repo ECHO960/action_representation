@@ -24,11 +24,11 @@ todo: update data format in this repo
 
 # MILETONE
 1. 11/5  - 11/12 
-LCH: Pre-process Data  
-DKN: go through code 
+* LCH: Pre-process Data  
+* DKN: go through code 
 2. 11/12 - 11/19 
-LCH: implement solutions 
-DKN: implement solutions 
+* LCH: implement solutions 
+* DKN: implement solutions 
 3. 11/19 - 11/26 
-experiments
+* experiments
 4. 11/26 - 12/03
