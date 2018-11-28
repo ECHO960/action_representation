@@ -9,8 +9,7 @@ There are following questions that will be possibly concerned. For example, How 
 We would like to try different approximation methods on each point trajectory of the skeleton animations data. Also, we would like to cluster the existing skeleton data and derive a sensible form to represent each action using these techniques. Further, we plan to use such representation to generate new combination actions which consist of multiple actions. Also, through this representation power, we plan to use this as an action descriptor to do recognition task on the action. 
 
 # DATASET:
-MSR-action-3D{\link https://uowmailedu-my.sharepoint.com/personal/wanqing_uow_edu_au/Documents/Forms/All.aspx?slrid=4e9fa69e-70a6-7000-6990-0f73c0aeb903&RootFolder=%2Fpersonal%2Fwanqing_uow_edu_au%2FDocuments%2FResearchDatasets%2FMSRAction3D&FolderCTID=0x012000749FC0405D340B469C688951CBE52578}
-todo: update data format in this repo
+[MSR-action-3D](https://uowmailedu-my.sharepoint.com/personal/wanqing_uow_edu_au/Documents/Forms/All.aspx?slrid=4e9fa69e-70a6-7000-6990-0f73c0aeb903&RootFolder=%2Fpersonal%2Fwanqing_uow_edu_au%2FDocuments%2FResearchDatasets%2FMSRAction3D&FolderCTID=0x012000749FC0405D340B469C688951CBE52578)
 
 # project outline
 * definition of problem 
