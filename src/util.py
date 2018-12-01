@@ -1,19 +1,20 @@
 import numpy as np 
 import os
-
 import matplotlib.pyplot as plt
 import matplotlib.animation
 from mpl_toolkits.mplot3d import Axes3D
 
-joints = [[3, 20], [3, 1], [1, 8], [8, 10], [10, 12], [3, 2], [2, 9], [9, 11], [11, 13],\
-        [3, 4], [4, 7], [7, 5], [5, 14], [14, 16], [16, 18], [7, 6], [6, 15], [15, 17], [17, 19]]
+joints = [[2, 19], [2, 0], [0, 7], [7, 9], [9, 11], [2, 1], [1, 8], [8, 10], [10, 12],\
+        [2, 3], [3, 6], [6, 4], [4, 13], [13, 15], [15, 17], [6, 5], [5, 14], [14, 16], [16, 18]]
+length = [0.26058642, 0.20741401, 0.26374705, 0.2848494,  0.06721901, 0.20688813, \
+        0.26339344, 0.28399782, 0.06754426, 0.2775788, 0.21709026, 0.18817224, \
+        0.57511103,0.42697567, 0.16832953, 0.18817167, 0.57247651, 0.42698327, 0.16832914]
 
 def load_data(name):
     lines = open(name).readlines()
     lines = [[float(x) for x in line.strip().split(' ')] \
             for line in lines]
     lines = np.array(lines).reshape([-1, 20, 4]) # 20*frames x 4
-    # print(lines.shape) # frames x 20 x 4
     return lines
 
 def load_all(datafolder='../data/'):
@@ -34,7 +35,8 @@ def load_all(datafolder='../data/'):
         all_data.append(data)
         all_class.append(class_id)
         all_subject.append(subject_id)
-    return np.stack(all_data), np.stack(all_class), np.stack(all_subject)
+    all_data = preProcess(np.stack(all_data))
+    return all_data, np.stack(all_class), np.stack(all_subject)
 
 def load_one(datafolder='../data/', label=1, subject=1, instant=1):
     name = "a%02d_s%02d_e%02d_skeleton3D.txt"%(label, subject, instant)
@@ -45,7 +47,27 @@ def load_one(datafolder='../data/', label=1, subject=1, instant=1):
     for x in range(20):
         for y in range(4):
             data[:,x,y] = np.interp(np.linspace(0, old_data.shape[0]-1, max_length), np.arange(old_data.shape[0]), old_data[:,x,y])
-    return np.reshape(data, (1, data.shape[0], data.shape[1], data.shape[2]))
+    data = np.reshape(data, (1, data.shape[0], data.shape[1], data.shape[2]))
+    data = preProcess(data)
+    return data
+
+def preProcess(data):
+    #  video_number x frames x 20 x 4
+    # length normalization
+    data = data[:,:,:,0:3]
+    new_data = np.copy(data)
+    global length 
+    for video in range(data.shape[0]):
+        for frame in range(data.shape[1]):
+            for i, pair in enumerate(joints):
+                vector = data[video, frame, pair[1], :] - data[video, frame, pair[0], :]
+                vector = vector / np.sqrt(np.square(vector).sum()) * length[i]
+                new_data[video, frame, pair[1], :] = new_data[video, frame, pair[0], :] + vector
+    # position normalization
+    for video in range(data.shape[0]):
+        for frame in range(data.shape[1]):
+            new_data[video, frame, :, :] -= new_data[video, frame, 2, :]
+    return new_data[:,:,:,[0,2,1]]
 
 def animate_skeleton(data_sequence):
     """
@@ -60,8 +82,8 @@ def animate_skeleton(data_sequence):
         points.set_3d_properties(current_frame[:,2])
 
         for idx, each in enumerate(lines):
-            joint_1 = joints[idx][0] - 1
-            joint_2 = joints[idx][1] - 1
+            joint_1 = joints[idx][0]
+            joint_2 = joints[idx][1]
             each.set_data(current_frame[(joint_1,joint_2),0], current_frame[(joint_1,joint_2),1])
             each.set_3d_properties(current_frame[(joint_1,joint_2),2])
         title.set_text('3D Test, time={}'.format(num))
@@ -71,8 +93,8 @@ def animate_skeleton(data_sequence):
     points, = ax.plot(data_sequence[0,:,0], data_sequence[0,:,1], data_sequence[0,:,2],linestyle="", marker="o")
     lines = []
     for each in joints:
-        joint_1 = each[0] - 1
-        joint_2 = each[1] - 1
+        joint_1 = each[0]
+        joint_2 = each[1]
         graph, = ax.plot(data_sequence[0,(joint_1, joint_2),0], data_sequence[0,(joint_1, joint_2),0], data_sequence[0,(joint_1, joint_2),0], c= 'r')
         lines.append(graph)
     ani = matplotlib.animation.FuncAnimation(fig, update_graph, 100, fargs= (points, lines),
@@ -82,7 +104,7 @@ def animate_skeleton(data_sequence):
     ax.set_xlabel('X')
     ax.set_ylim3d([-1.0, 1.0])
     ax.set_ylabel('Y')
-    ax.set_zlim3d([0, 4.0])
+    ax.set_zlim3d([-1.5, .5])
     ax.set_zlabel('Z')
     ax.set_title('3D Test')
     plt.show()
