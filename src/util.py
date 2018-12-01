@@ -54,16 +54,37 @@ def animate_skeleton(data_sequence):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     title = ax.set_title('3D Test')
-    def update_graph(num):
-        current_joint = data_sequence[num,:,:]
-        graph.set_data (current_joint[:,0], current_joint[:,1])
-        graph.set_3d_properties(current_joint[:,2])
+    def update_graph(num, points, lines):
+        current_frame = data_sequence[num,:,:]
+        points.set_data (current_frame[:,0], current_frame[:,1])
+        points.set_3d_properties(current_frame[:,2])
+
+        for idx, each in enumerate(lines):
+            joint_1 = joints[idx][0] - 1
+            joint_2 = joints[idx][1] - 1
+            each.set_data(current_frame[(joint_1,joint_2),0], current_frame[(joint_1,joint_2),1])
+            each.set_3d_properties(current_frame[(joint_1,joint_2),2])
         title.set_text('3D Test, time={}'.format(num))
         return title, graph
-    graph, = ax.plot(data_sequence[0,:,0], data_sequence[0,:,1], data_sequence[0,:,2], linestyle="", marker="o")
-    ani = matplotlib.animation.FuncAnimation(fig, update_graph, 100, 
-                               interval=40, blit=True)
 
+
+    points, = ax.plot(data_sequence[0,:,0], data_sequence[0,:,1], data_sequence[0,:,2],linestyle="", marker="o")
+    lines = []
+    for each in joints:
+        joint_1 = each[0] - 1
+        joint_2 = each[1] - 1
+        graph, = ax.plot(data_sequence[0,(joint_1, joint_2),0], data_sequence[0,(joint_1, joint_2),0], data_sequence[0,(joint_1, joint_2),0], c= 'r')
+        lines.append(graph)
+    ani = matplotlib.animation.FuncAnimation(fig, update_graph, 100, fargs= (points, lines),
+                               interval=40, blit=False)
+
+    ax.set_xlim3d([-1.0, 1.0])
+    ax.set_xlabel('X')
+    ax.set_ylim3d([-1.0, 1.0])
+    ax.set_ylabel('Y')
+    ax.set_zlim3d([0, 4.0])
+    ax.set_zlabel('Z')
+    ax.set_title('3D Test')
     plt.show()
 
 if __name__ == '__main__':
