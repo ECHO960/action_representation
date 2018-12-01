@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import util
 
 def polynomial_basis(order, x):
@@ -43,17 +44,34 @@ def least_sqaure_approximation(x, y, repeat, basis, order, period = 2):
     return error, coeff, A
 
 if __name__ == '__main__':
-    data, _, _ = util.load_all('../data/')
 
-    y = data[3:6,:,0,0]
-    y_flat = y.reshape(-1)
-    x = np.arange(data.shape[1])
-    error, coeff, basis = least_sqaure_approximation(x, y_flat, 3, 'poly+trig', 10)
+    all_data = []
+    for i in [1,2,3,5,6,7,8,9,10]:
+        for j in range(1,4):
+            data = util.load_one('../data/', 2, i, j)
+            all_data.append(data)
+    all_data = np.squeeze(np.array(all_data))
+    #27 number of action x frame x 20 join x coordiante
+    print(all_data.shape)
+    general_curve = np.zeros(all_data.shape[1:])
+    for i in range(20):
+        for j in range(3):
+            y = all_data[:,:,i,j] #action x frame
+            y_flat = y.reshape(-1)
+            x = np.arange(all_data.shape[1])
+            error, coeff, basis = least_sqaure_approximation(x, y_flat, 27, 'poly+trig', 10)
 
-    import matplotlib.pyplot as plt
-    plot_x = np.arange(data.shape[1], 0.01)
-    plt.plot(basis.dot(coeff), c='r')
-    plt.plot(y[0,:],c='b')
-    plt.plot(y[1,:],c='y')
-    plt.plot(y[2,:],c='g')
-    plt.show()
+            general_curve[:,i,j] = basis.dot(coeff)
+    util.animate_skeleton(general_curve)
+    # # import matplotlib.pyplot as plt
+    # # plot_x = np.arange(data.shape[1], 0.01)
+    # # # plt.plot(basis.dot(coeff), c='r')
+    # # for i in range(27):
+    # #     plt.plot(y[i,:],c='b')
+    # # plt.show()
+
+    # fig = plt.figure()
+    # ax = plt.axes(projection='3d')  
+    # for i in range(y.shape[0]):
+    #     ax.plot(y[i,:,0], y[i,:,1], y[i,:,2], '-b')
+    # plt.show()
