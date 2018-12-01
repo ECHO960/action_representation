@@ -1,6 +1,9 @@
 import numpy as np 
 import os
 
+joints = [[3, 20], [3, 1], [1, 8], [8, 10], [10, 12], [3, 2], [2, 9], [9, 11], [11, 13],\
+        [3, 4], [4, 7], [7, 5], [5, 14], [14, 16], [16, 18], [7, 6], [6, 15], [15, 17], [17, 19]]
+
 def load_data(name):
     lines = open(name).readlines()
     lines = [[float(x) for x in line.strip().split(' ')] \
