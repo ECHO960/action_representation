@@ -20,7 +20,7 @@ def relative_joint_transform_rev(data):
                 new_data[video, frame, pair[1], :] = vector
     return new_data
 
-def relative_time_transform(data)
+def relative_time_transform(data):
     new_data = np.copy(data)
     for video in range(data.shape[0]):
         for frame in range(1, data.shape[1]):
@@ -28,11 +28,11 @@ def relative_time_transform(data)
             new_data[video, frame, :, :] = vector
     return new_data 
 
-def relative_time_transform_rev(data)
+def relative_time_transform_rev(data):
     new_data = np.copy(data)
     for video in range(data.shape[0]):
         for frame in range(1, data.shape[1]):
-            vector = data[video, frame, :, :] + data[video, frame - 1, :, :]
+            vector = data[video, frame, :, :] + new_data[video, frame - 1, :, :]
             new_data[video, frame, :, :] = vector
     return new_data
 
