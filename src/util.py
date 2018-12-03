@@ -109,6 +109,42 @@ def animate_skeleton(data_sequence):
     ax.set_title('3D Test')
     plt.show()
 
+def static_skeleton(data_sequence, stride = 10,offset = np.array([0.5, 0.5, 0])):
+    """
+    Generate a bunch of static skeleton plot
+    stride: for every stride frame display a skeleton
+    offset: for every stride frame, move the skeleton by offset amount accroding to x, y, z
+    """
+    totla_frame = data_sequence.shape[0]
+    num_of_skeleton = int(totla_frame/stride)
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    ax.set_xlim3d([-1.5 + offset[0]/2 * num_of_skeleton, 1.0 + offset[0]/2 * num_of_skeleton])
+    ax.set_xlabel('X')
+    ax.set_ylim3d([-1.5 + offset[0]/2 * num_of_skeleton, 1.0 + offset[0]/2 * num_of_skeleton])
+    ax.set_ylabel('Y')
+    ax.set_zlim3d([-1.5, .5])
+    ax.set_zlabel('Z')
+    ax.set_title('3D Test')
+    for idx,j in enumerate(range(0, totla_frame, stride)):
+        current_offset = idx * offset
+        data_sequence_offset = data_sequence[j,:,:] + current_offset
+        ax.plot(data_sequence_offset[:,0], data_sequence_offset[:,1], data_sequence_offset[:,2],linestyle="", marker="o",c='b')
+        for each in joints:
+            joint_1 = each[0]
+            joint_2 = each[1]
+            graph, = ax.plot(data_sequence_offset[(joint_1, joint_2),0], \
+                            data_sequence_offset[(joint_1, joint_2),1], \
+                            data_sequence_offset[(joint_1, joint_2),2], c= 'r')
+    ax.grid(False)
+    # # and later in the code:
+    # ax.get_proj = make_get_proj(ax, 1.2, 1.2, 1)
+    # ax.set_aspect(1.0)
+
+    plt.show()
+
+
 if __name__ == '__main__':
-    data = load_one()
-    animate_skeleton(np.squeeze(data))
+    data = load_one(label=1, subject=1, instant=1)
+    # animate_skeleton(np.squeeze(data)[50:])
+    static_skeleton(np.squeeze(data)[50:])
