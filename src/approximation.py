@@ -2,14 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import util
+from relative_feature import relative_joint_transform, relative_joint_transform_rev,\
+        relative_time_transform, relative_time_transform_rev
 
 def polynomial_basis(order, x):
-	return_matrix = np.zeros((order+1,x.shape[0])) 
-	for i in range(order+1):
-		return_matrix[i,:] = x ** i
+    return_matrix = np.zeros((order+1,x.shape[0])) 
+    for i in range(order+1):
+        return_matrix[i,:] = x ** i
 
-	return return_matrix.T
-
+    return return_matrix.T
 
 def trigonmetric_basis(order, x, period):
     return_matrix = np.zeros((2 * order, x.shape[0]))
@@ -25,7 +26,6 @@ def poly_with_trig_basis(order, x, period):
     return_matrix = np.hstack((poly_basis, trig_basis)) 
     return return_matrix
 
-
 def least_sqaure_approximation(x, y, repeat, basis, order, period = 2):
     if basis == 'tri':
         A = trigonmetric_basis(order, x, period)
@@ -39,30 +39,34 @@ def least_sqaure_approximation(x, y, repeat, basis, order, period = 2):
     coeff = np.linalg.lstsq(stack_A, y)[0]
 
     error = stack_A.dot(coeff) - y
-    print("L_inf:",np.max(error))
-    print("L_lsq:", np.sqrt(np.sum(error ** 2)))
+    # print("L_inf:",np.max(error))
+    # print("L_lsq:", np.sqrt(np.sum(error ** 2)))
     return error, coeff, A
 
-if __name__ == '__main__':
-
-    all_data = []
-    for i in [1,2,3,5,6,7,8,9,10]:
-        for j in range(1,4):
-            data = util.load_one('../data/', 2, i, j)
-            all_data.append(data)
-    all_data = np.squeeze(np.array(all_data))
-    #27 number of action x frame x 20 join x coordiante
-    print(all_data.shape)
+def do_approximation(data):
+    all_data = relative_time_transform(data)
     general_curve = np.zeros(all_data.shape[1:])
-    for i in range(20):
-        for j in range(3):
-            y = all_data[:,:,i,j] #action x frame
+    shape = (1, general_curve.shape[0], general_curve.shape[1], general_curve.shape[2])
+    final_coeff = np.zeros((shape[2], shape[3], 11))
+    for i in range(shape[2]):
+        for j in range(shape[3]):
+            y = all_data[:,1:,i,j] #action x frame
             y_flat = y.reshape(-1)
-            x = np.arange(all_data.shape[1])
-            error, coeff, basis = least_sqaure_approximation(x, y_flat, 27, 'poly+trig', 10)
+            x = np.arange(all_data.shape[1]-1)
+            error, coeff, basis = least_sqaure_approximation(x, y_flat, all_data.shape[0], 'poly', 10)
+            general_curve[1:,i,j] = basis.dot(coeff)
+            final_coeff[i,j,:] = coeff
+    general_curve[0,:,:] = all_data[:,0,:,:].mean(axis=0)
+    general_curve = relative_time_transform_rev(np.reshape(general_curve, shape))[0]
+    return general_curve, final_coeff
 
-            general_curve[:,i,j] = basis.dot(coeff)
+if __name__ == '__main__':
+    all_data = []
+    data, classes, subjects = util.load_all()
+    all_data = data[np.where(classes == 1)]
+    general_curve = do_approximation(all_data)
     util.animate_skeleton(general_curve)
+
     # # import matplotlib.pyplot as plt
     # # plot_x = np.arange(data.shape[1], 0.01)
     # # # plt.plot(basis.dot(coeff), c='r')
