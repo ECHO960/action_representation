@@ -64,7 +64,7 @@ if __name__ == '__main__':
     all_data = []
     data, classes, subjects = util.load_all()
     all_data = data[np.where(classes == 1)]
-    general_curve = do_approximation(all_data)
+    general_curve, final_coeff = do_approximation(all_data)
     util.animate_skeleton(general_curve)
 
     # # import matplotlib.pyplot as plt
