@@ -51,6 +51,12 @@ def load_one(datafolder='../data/', label=1, subject=1, instant=1):
     data = preProcess(data)
     return data
 
+def load_class(class_id = 1):
+    data, classes, subjects = load_all()
+    train_x = data
+    train_y = classes
+    return train_x[np.where(train_y == class_id)]
+
 def preProcess(data):
     #  video_number x frames x 20 x 4
     # length normalization

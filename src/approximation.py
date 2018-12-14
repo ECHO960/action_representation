@@ -149,16 +149,19 @@ def draw_approximation_curve_temporal_difference(joint):
     plt.show()
 
 def generate_animation():
-    all_data = []
-    for i in [1,2,3,5,6,7,8,9,10]:
-        for j in range(1,4):
-            data = util.load_one('../data/', 2, i, j)
-            all_data.append(data)
-    all_data = np.squeeze(np.array(all_data))
+    animation_num = 15
+    # all_data = []
+    # for i in [1,2,3,5,6,7,8,9,10]:
+    #     for j in range(1,4):
+    #         data = util.load_one('../data/', animation_num, i, j)
+    #         all_data.append(data)
+    all_data = util.load_class(animation_num)
     general_curve, final_coeff = do_approximation(all_data)
-    util.animate_skeleton(general_curve, 'temporal_difference.mp4', caption="temporal difference method")
+    util.animate_skeleton(general_curve, 'temporal_difference.mp4', caption="temporal difference method - side kicking")
 
-    
+    general_curve, final_coeff = do_approximation_normal(all_data) 
+    util.animate_skeleton(general_curve, 'naive_method.mp4', caption="naive method - side kicking")
+
 
 
 if __name__ == '__main__':

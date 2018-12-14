@@ -129,32 +129,20 @@ def rodrigues(r):
     return R
 
 def do_approximation(data):
+    num_sample = data.shape[0]
     root_joints_pair, all_axis, all_rotations, bone_length, correspondance = axis_angle_transform(data)
 
     root_joints_pair = np.mean(root_joints_pair, axis = 0)
     all_data = all_axis * all_rotations #(number of bones, number of example ,time frame, 3)
 
-    # difference = np.zeros(all_axis.shape)
-    # for i in range(1,100):
-    #     difference[:,:,i,:] = all_axis[:,:,i,:] - all_axis[:,:,i-1,:]
-
-    for i in range(27):
-        plt.plot(all_axis[0,i,:,0], 'r')
-        # plt.plot(difference[0,i,:,1], 'g')
-        # plt.plot(difference[0,i,:,2], '')
-
-    # plt.show()
-
     general_curve = np.zeros((18, 100, 3))
     for i in range(18):
         for j in range(3):
-            y = all_data[i,:,:,j] #action x frame
+            y = all_axis[i,:,:,j] #action x frame
             y_flat = y.reshape(-1)
             x = np.arange(100)
-            error, coeff, basis = approximation.least_sqaure_approximation(x, y_flat, 27, 'poly+trig', 40)
+            error, coeff, basis = approximation.least_sqaure_approximation(x, y_flat, num_sample, 'poly+trig', 10)
             general_curve[i,:,j] = basis.dot(coeff)
-    plt.plot(general_curve[0,:,0], 'g')
-    plt.show()
     all_axis = general_curve
 
     general_curve = np.zeros((18, 100, 1))
@@ -163,62 +151,22 @@ def do_approximation(data):
         print(y.shape)
         y_flat = y.reshape(-1)
         x = np.arange(100)
-        error, coeff, basis = approximation.least_sqaure_approximation(x, y_flat, 27, 'poly+trig', 10)
+        error, coeff, basis = approximation.least_sqaure_approximation(x, y_flat, num_sample, 'poly+trig', 10)
         general_curve[i,:,0] = basis.dot(coeff)
     general_curve = all_axis * general_curve
-    # general_curve = np.zeros(all_data.shape[1:])
-    
-    # shape = (1, general_curve.shape[0], general_curve.shape[1], general_curve.shape[2])
-    
-    # final_coeff = np.zeros((shape[2], shape[3], 11))
-    # for i in range(shape[2]):
-    #     for j in range(shape[3]):
-    #         y = all_data[:,1:,i,j] #action x frame
-    #         y_flat = y.reshape(-1)
-    #         x = np.arange(all_data.shape[1]-1)
-    #         error, coeff, basis = least_sqaure_approximation(x, y_flat, all_data.shape[0], 'poly', 10)
-    #         general_curve[1:,i,j] = basis.dot(coeff)
-    #         final_coeff[i,j,:] = coeff
-    # general_curve[0,:,:] = all_data[:,0,:,:].mean(axis=0)
 
 
     general_curve = axis_angle_transform_rev(root_joints_pair, general_curve, bone_length, correspondance)
     return general_curve
 
 
-# def reverse_transform(data_sequence):
-# all_data = []
-# for i in [1,2,3,5,6,7,8,9,10]:
-#     for j in range(1,4):
-#         data = util.load_one('../data/', 2, i, j)
-#         all_data.append(data)
-# all_data = np.squeeze(np.array(all_data))
-
-# print(bone_hoerarchy_from_joints(util.joints, (2,19)))    
-# root_joints, all_axis, all_rotations, bone_lengtha = axis_angle_transform(all_data)
-# print(root_joints.shape)
-# print(all_axis.shape)
-# print(all_rotations.shape)
-# print((all_axis * all_rotations).shape)
 if __name__ == '__main__':
     all_data = []
-    for i in [1,2,3,5,6,7,8,9,10]:
-        for j in range(1,4):
-            data = util.load_one('../data/', 2, i, j)
-            all_data.append(data)
-    all_data = np.squeeze(np.array(all_data))
+    animation_num = 15
+    # for i in [1,2,3,5,6,7,8,9,10]:
+    #     for j in range(1,4):
+    #         data = util.load_one('../data/', animation_num, i, j)
+    #         all_data.append(data)
+    all_data = util.load_class(animation_num)
     points = do_approximation(all_data)
-    util.animate_skeleton(points)
-
-# data = util.load_one()
-
-# root_joints_pair, all_axis, all_rotations, bone_length, correspondance = axis_angle_transform(data)
-
-# data_sequence = all_axis * all_rotations
-# data_sequence = np.mean(data_sequence,axis = 1)
-# print(data_sequence.shape)
-
-# all_points = axis_angle_transform_rev(np.squeeze(root_joints_pair), data_sequence, bone_length, correspondance)
-
-# print(all_points.shape)
-# util.animate_skeleton(all_points)
+    util.animate_skeleton(points, 'axis_angle.mp4', 'axis angle method - side kicking')
