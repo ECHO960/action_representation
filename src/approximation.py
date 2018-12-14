@@ -60,6 +60,24 @@ def do_approximation(data):
     general_curve = relative_time_transform_rev(np.reshape(general_curve, shape))[0]
     return general_curve, final_coeff
 
+def do_approximation_normal(data):
+    all_data = data
+    general_curve = np.zeros(all_data.shape[1:])
+    shape = (1, general_curve.shape[0], general_curve.shape[1], general_curve.shape[2])
+    final_coeff = np.zeros((shape[2], shape[3], 2))
+    for i in range(shape[2]):
+        for j in range(shape[3]):
+            y = all_data[:,:,i,j] #action x frame
+            y_flat = y.reshape(-1)
+            x = np.arange(all_data.shape[1])
+            error, coeff, basis = least_sqaure_approximation(x, y_flat, all_data.shape[0], 'poly', 1)
+            general_curve[:,i,j] = basis.dot(coeff)
+            final_coeff[i,j,:] = coeff
+    # general_curve[0,:,:] = all_data[:,0,:,:].mean(axis=0)
+    # general_curve = relative_time_transform_rev(np.reshape(general_curve, shape))[0]
+    return general_curve, final_coeff
+
+
 def draw_approximation_curve_naive():
     """
     sequence - 1 x 
