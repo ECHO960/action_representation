@@ -69,7 +69,7 @@ def preProcess(data):
             new_data[video, frame, :, :] -= new_data[video, frame, 2, :]
     return new_data[:,:,:,[0,2,1]]
 
-def animate_skeleton(data_sequence):
+def animate_skeleton(data_sequence, save_file = None, caption = '3D Test'):
     """
     data_sequence: a Frame x 20 x 4
     """
@@ -86,7 +86,7 @@ def animate_skeleton(data_sequence):
             joint_2 = joints[idx][1]
             each.set_data(current_frame[(joint_1,joint_2),0], current_frame[(joint_1,joint_2),1])
             each.set_3d_properties(current_frame[(joint_1,joint_2),2])
-        title.set_text('3D Test, time={}'.format(num))
+        title.set_text('{}, time={}'.format(caption, num))
         return title, graph
 
 
@@ -100,13 +100,16 @@ def animate_skeleton(data_sequence):
     ani = matplotlib.animation.FuncAnimation(fig, update_graph, 100, fargs= (points, lines),
                                interval=40, blit=False)
 
+
     ax.set_xlim3d([-1.0, 1.0])
     ax.set_xlabel('X')
     ax.set_ylim3d([-1.0, 1.0])
     ax.set_ylabel('Y')
     ax.set_zlim3d([-1.5, .5])
     ax.set_zlabel('Z')
-    ax.set_title('3D Test')
+
+    if save_file is not None:
+        ani.save(save_file)
     plt.show()
 
 def static_skeleton(data_sequence, stride = 10,offset = np.array([0.5, 0.5, 0])):
@@ -142,7 +145,6 @@ def static_skeleton(data_sequence, stride = 10,offset = np.array([0.5, 0.5, 0]))
     # ax.set_aspect(1.0)
 
     plt.show()
-
 
 if __name__ == '__main__':
     data = load_one(label=1, subject=1, instant=1)
